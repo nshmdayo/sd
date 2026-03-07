@@ -1,4 +1,4 @@
-module github.com/nshmdayo/zcd
+module github.com/nshmdayo/sd
 
 go 1.26
 

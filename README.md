@@ -16,14 +16,14 @@ A smarter `cd` command for bash and zsh. Jump to directories by fuzzy name, book
 ### Build from source
 
 ```bash
-go install github.com/nshmdayo/zcd/cmd/sd@latest
+go install github.com/nshmdayo/sd/cmd/sd@latest
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/nshmdayo/zcd
-cd zcd
+git clone https://github.com/nshmdayo/sd
+cd sd
 make build          # produces bin/sd
 ```
 

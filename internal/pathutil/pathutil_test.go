@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/nshmdayo/zcd/internal/pathutil"
+	"github.com/nshmdayo/sd/internal/pathutil"
 )
 
 func TestResolve(t *testing.T) {

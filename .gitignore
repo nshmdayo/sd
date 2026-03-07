@@ -38,7 +38,7 @@ ehthumbs.db
 Thumbs.db
 
 # Local data files
-.zcd_data.json
+.sd_data.json
 *.log
 
 # Temporary files

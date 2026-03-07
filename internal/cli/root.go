@@ -10,14 +10,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nshmdayo/zcd/internal/bookmark"
-	"github.com/nshmdayo/zcd/internal/config"
-	"github.com/nshmdayo/zcd/internal/fuzzy"
-	"github.com/nshmdayo/zcd/internal/history"
-	"github.com/nshmdayo/zcd/internal/output"
-	"github.com/nshmdayo/zcd/internal/pathutil"
-	"github.com/nshmdayo/zcd/internal/selector"
-	"github.com/nshmdayo/zcd/internal/stack"
+	"github.com/nshmdayo/sd/internal/bookmark"
+	"github.com/nshmdayo/sd/internal/config"
+	"github.com/nshmdayo/sd/internal/fuzzy"
+	"github.com/nshmdayo/sd/internal/history"
+	"github.com/nshmdayo/sd/internal/output"
+	"github.com/nshmdayo/sd/internal/pathutil"
+	"github.com/nshmdayo/sd/internal/selector"
+	"github.com/nshmdayo/sd/internal/stack"
 )
 
 const version = "0.1.0"

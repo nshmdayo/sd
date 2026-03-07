@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nshmdayo/zcd/internal/cli"
-	"github.com/nshmdayo/zcd/internal/config"
+	"github.com/nshmdayo/sd/internal/cli"
+	"github.com/nshmdayo/sd/internal/config"
 )
 
 // runScd sets up isolated XDG dirs, captures stdout, calls Execute with the

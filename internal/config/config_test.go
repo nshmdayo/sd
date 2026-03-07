@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/nshmdayo/zcd/internal/config"
+	"github.com/nshmdayo/sd/internal/config"
 )
 
 func TestDefaults(t *testing.T) {

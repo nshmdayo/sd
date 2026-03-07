@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/nshmdayo/zcd/internal/cli"
+	"github.com/nshmdayo/sd/internal/cli"
 )
 
 func main() {

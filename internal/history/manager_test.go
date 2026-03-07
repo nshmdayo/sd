@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/nshmdayo/zcd/internal/history"
+	"github.com/nshmdayo/sd/internal/history"
 )
 
 func TestRecord(t *testing.T) {
