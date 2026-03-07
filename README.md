@@ -1,187 +1,172 @@
-# zcd - Smart Directory Navigation
+# scd — smart cd
 
-`zcd` is an intelligent `cd` command replacement written in Go that provides enhanced directory navigation features including history tracking, bookmarks, and smart suggestions.
+A smarter `cd` command for bash and zsh. Jump to directories by fuzzy name, bookmark, or history — without typing full paths.
 
 ## Features
 
-- **Directory History**: Automatically tracks visited directories with usage frequency
-- **Bookmarks**: Register frequently used directories as bookmarks for quick access
-- **Smart Suggestions**: Intelligent directory suggestions based on partial input
-- **Shell Integration**: Seamlessly replaces the built-in `cd` command
-- **Cross-platform**: Works on Linux, macOS, and Windows
+- **Fuzzy jump** — type a partial directory name and jump instantly
+- **Bookmarks** — save directories with a name and jump to them with `@name`
+- **History** — frecency-ranked history with interactive selection
+- **Stack** — pushd/popd style navigation
+- **Zero hard dependencies** — pure Go binary, no `find`, `sqlite3`, or CGO required
+- **fzf integration** — uses fzf when available, falls back to a built-in UI
 
 ## Installation
 
 ### Build from source
 
 ```bash
-git clone https://github.com/nshmdayo/zcd.git
+go install github.com/nshmdayo/zcd/cmd/scd@latest
+```
+
+Or clone and build:
+
+```bash
+git clone https://github.com/nshmdayo/zcd
 cd zcd
-make build
-make install
+make build          # produces bin/scd
 ```
 
-### Enable Shell Integration
+Move `bin/scd` somewhere on your `$PATH`, then add the shell integration to your RC file.
 
-Add the following line to your shell configuration file (`.bashrc`, `.zshrc`, etc.):
+### Shell integration
+
+**zsh** — add to `~/.zshrc`:
+
+```zsh
+eval "$(scd --init zsh)"
+```
+
+**bash** — add to `~/.bashrc`:
 
 ```bash
-source /path/to/zcd/shell_integration.sh
+eval "$(scd --init bash)"
 ```
 
-After sourcing the script, restart your shell or run:
-```bash
-source ~/.bashrc  # or ~/.zshrc
-```
+Restart your shell or `source ~/.zshrc` / `source ~/.bashrc`.
 
 ## Usage
 
-### Basic Navigation
+### Fuzzy jump
 
 ```bash
-# Change to home directory
-cd
-
-# Change to a specific directory
-cd /path/to/directory
-
-# Go back to previous directory
-cd -
-
-# Smart search - finds directories matching "doc"
-cd doc
-
-# Use history number
-cd 3
+cd proj          # jumps to the best-matching subdirectory named like "proj"
+cd -g conf       # global search: searches from home directory
 ```
 
-### Directory History
-
-```bash
-# Show directory history
-cd --history
-# or
-zcd-history
-```
+Candidate scoring is based on name similarity, directory depth, and visit frecency.
+If multiple candidates match, an interactive selector (fzf or built-in) opens.
 
 ### Bookmarks
 
 ```bash
-# Add current directory to bookmarks
-cd --add
-# or
-zcd-add
-
-# Add specific directory to bookmarks
-cd --add /path/to/directory
-# or
-zcd-add /path/to/directory
-
-# Show bookmarks
-cd --bookmarks
-# or
-zcd-bookmarks
-
-# Remove bookmark
-cd --remove /path/to/directory
-# or
-zcd-remove /path/to/directory
+cd -a myproj     # bookmark current directory as "myproj"
+cd @myproj       # jump to bookmark "myproj"
+cd -l            # list all bookmarks
+cd -d myproj     # delete bookmark "myproj"
+cd -e            # edit bookmarks file in $EDITOR
 ```
 
-### Smart Suggestions
+Tab completion works for bookmark names:
 
-When you type a partial directory name, `zcd` will:
+```bash
+cd @my<TAB>      # completes to @myproj
+```
 
-1. Look for exact matches first
-2. Search through your history for directories containing the input
-3. Prioritize bookmarked directories
-4. Consider usage frequency and recency
+### History
 
-If multiple matches are found, you'll be presented with a numbered list to choose from.
+```bash
+cd -H            # interactive history browser (frecency order)
+cd -1            # jump to most recent history entry
+cd -3            # jump to third history entry
+cd --clear-history  # delete all history
+```
+
+History is recorded automatically after every successful `cd`.
+
+### Stack (pushd/popd)
+
+```bash
+cd -p /some/path # push path onto stack and jump to it
+cd --            # pop: return to previous stack entry
+cd -s            # show the current stack
+```
+
+### Other
+
+```bash
+cd               # go home (same as builtin cd)
+cd --config      # edit config file in $EDITOR
+cd --version     # print version
+cd --help        # show help
+```
 
 ## Configuration
 
-`zcd` stores its data in `~/.zcd_data.json`. The configuration includes:
+Config file: `~/.config/smart-cd/config.toml` (created on first `cd --config`).
 
-- `max_history`: Maximum number of history entries to keep (default: 100)
-- `max_bookmarks`: Maximum number of bookmarks to keep (default: 50)
+```toml
+[search]
+max_depth        = 5
+global_root      = "~"
+exclude_patterns = ["node_modules", ".git", "dist", ".cache"]
 
-## Examples
+[history]
+max_entries = 1000
+sort        = "frecency"   # frecency | time | alpha
 
-```bash
-# Navigate to a project directory by partial name
-cd myproj
-# If multiple matches found:
-# 1. /home/user/projects/myproject
-# 2. /home/user/work/myproject-old
-# Select number (1-2): 1
-
-# Bookmark your current working directory
-cd --add
-
-# Show your navigation history
-cd --history
-# Directory History:
-# ==================
-#  1. /home/user/projects/myproject (used 15 times) [★]
-#  2. /home/user/documents (used 8 times)
-#  3. /home/user/downloads (used 3 times)
-
-# Quick access using history numbers
-cd 2  # Goes to /home/user/documents
+[ui]
+color        = true
+fuzzy_finder = "fzf"       # fzf | peco | internal
 ```
 
-## Data Storage
+Environment variable overrides:
 
-- History and bookmarks are stored in `~/.zcd_data.json`
-- Data includes path, usage count, last access time, and bookmark status
-- Automatic cleanup of old entries when limits are exceeded
-- Non-existent directories are automatically filtered out
+| Variable            | Effect                        |
+|---------------------|-------------------------------|
+| `SMART_CD_MAX_DEPTH`| Override `search.max_depth`   |
+| `NO_COLOR`          | Disable color output          |
+
+## Data files
+
+| File                                         | Contents          |
+|----------------------------------------------|-------------------|
+| `~/.config/smart-cd/config.toml`             | Configuration     |
+| `~/.config/smart-cd/bookmarks.json`          | Bookmarks         |
+| `~/.local/share/smart-cd/history.db`         | Visit history (SQLite) |
+| `~/.local/share/smart-cd/stack`              | Directory stack   |
+
+XDG base directories (`XDG_CONFIG_HOME`, `XDG_DATA_HOME`) are respected.
+
+## How it works
+
+`cd` is a shell builtin, so an external process cannot change the working directory directly.
+`scd` handles all the logic and prints the resolved path to stdout. A thin shell wrapper captures it and calls `builtin cd`:
+
+```
+shell wrapper (cd function)
+  └─ target=$(scd "$@" 2>/dev/tty)   ← captures path from stdout
+     builtin cd "$target"
+     scd --record "$target" &        ← record history asynchronously
+```
+
+UI output (fzf, error messages) goes to stderr so it reaches the terminal without polluting the captured path.
 
 ## Development
 
-### Building
-
 ```bash
-# Development build
-make dev
-
-# Production build
-make build
-
-# Build for multiple platforms
-make build-all
-
-# Run tests
-make test
-
-# Clean build artifacts
-make clean
+make test    # run all tests with race detector
+make bench   # run benchmarks
+make build   # build bin/scd
 ```
 
-### Project Structure
+## Requirements
 
-```
-zcd/
-├── main.go                 # Main application logic
-├── shell_integration.sh    # Shell integration script
-├── Makefile               # Build configuration
-├── go.mod                 # Go module definition
-└── README.md              # This file
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+- Go 1.24+
+- bash 4.0+ or zsh 5.0+
+- macOS 12+ or Linux (Ubuntu 20.04+)
+- [fzf](https://github.com/junegunn/fzf) (optional, recommended)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-Inspired by tools like `z`, `autojump`, and `fasd`, but designed to be simple, fast, and written in Go for easy installation and cross-platform compatibility.
+MIT
