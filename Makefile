@@ -1,7 +1,7 @@
 .PHONY: build test bench lint release clean
 
-build: ## Build the scd binary
-	go build -o bin/scd ./cmd/scd
+build: ## Build the sd binary
+	go build -o bin/sd ./cmd/sd
 
 test: ## Run tests
 	go test ./... -race -count=1

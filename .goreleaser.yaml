@@ -1,7 +1,7 @@
 builds:
-  - id: scd
-    main: ./cmd/scd
-    binary: scd
+  - id: sd
+    main: ./cmd/sd
+    binary: sd
     env:
       - CGO_ENABLED=0
     goos:
@@ -13,7 +13,7 @@ builds:
 
 archives:
   - format: tar.gz
-    name_template: "scd_{{ .Os }}_{{ .Arch }}"
+    name_template: "sd_{{ .Os }}_{{ .Arch }}"
 
 checksum:
   name_template: "checksums.txt"

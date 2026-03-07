@@ -22,7 +22,7 @@ import (
 
 const version = "0.1.0"
 
-// Execute is the main entry point for the scd binary.
+// Execute is the main entry point for the sd binary.
 func Execute() error {
 	cfg, err := config.Load()
 	if err != nil {
@@ -53,7 +53,7 @@ func route(args []string, cfg *config.Config) error {
 
 	// --- version / help ---
 	if first == "--version" || first == "-v" {
-		fmt.Fprintf(os.Stderr, "scd version %s\n", version)
+		fmt.Fprintf(os.Stderr, "sd version %s\n", version)
 		return nil
 	}
 	if first == "--help" || first == "-h" {
@@ -64,7 +64,7 @@ func route(args []string, cfg *config.Config) error {
 	// --- shell init script ---
 	if first == "--init" {
 		if len(args) < 2 {
-			return outputError("usage: scd --init <bash|zsh>", "")
+			return outputError("usage: sd --init <bash|zsh>", "")
 		}
 		return PrintInitScript(args[1])
 	}
@@ -72,7 +72,7 @@ func route(args []string, cfg *config.Config) error {
 	// --- record history (called from shell wrapper) ---
 	if first == "--record" {
 		if len(args) < 2 {
-			return outputError("usage: scd --record <path>", "")
+			return outputError("usage: sd --record <path>", "")
 		}
 		return recordHistory(args[1], cfg)
 	}
@@ -117,7 +117,7 @@ func route(args []string, cfg *config.Config) error {
 		// -d <name>: delete bookmark
 		if suffix == "d" {
 			if len(args) < 2 {
-				return outputError("usage: scd -d <name>", "run 'cd -l' to list available bookmarks")
+				return outputError("usage: sd -d <name>", "run 'cd -l' to list available bookmarks")
 			}
 			return bookmarkDelete(args[1], cfg)
 		}
@@ -132,14 +132,14 @@ func route(args []string, cfg *config.Config) error {
 		// -g <query>: global fuzzy search
 		if suffix == "g" {
 			if len(args) < 2 {
-				return outputError("usage: scd -g <query>", "")
+				return outputError("usage: sd -g <query>", "")
 			}
 			return fuzzyGlobal(args[1], cfg)
 		}
 		// -p <path>: stack push
 		if suffix == "p" {
 			if len(args) < 2 {
-				return outputError("usage: scd -p <path>", "")
+				return outputError("usage: sd -p <path>", "")
 			}
 			return stackPush(args[1], cfg)
 		}
@@ -539,7 +539,7 @@ fuzzy_finder = "fzf"       # fzf | peco | internal
 // ---- help ----
 
 func printHelp() {
-	fmt.Fprint(os.Stderr, `scd - smart cd
+	fmt.Fprint(os.Stderr, `sd - smart cd
 
 Usage:
   cd [query]         Fuzzy search in current directory
@@ -560,8 +560,8 @@ Usage:
   cd --help          Show this help
 
 Installation:
-  eval "$(scd --init bash)"   # add to ~/.bashrc
-  eval "$(scd --init zsh)"    # add to ~/.zshrc
+  eval "$(sd --init bash)"   # add to ~/.bashrc
+  eval "$(sd --init zsh)"    # add to ~/.zshrc
 `)
 }
 

@@ -1,5 +1,5 @@
 # smart-cd zsh integration
-# Usage: eval "$(scd --init zsh)"
+# Usage: eval "$(sd --init zsh)"
 
 function cd() {
     # No arguments: go home
@@ -8,28 +8,28 @@ function cd() {
         return $?
     fi
 
-    # Capture scd output; UI and errors go to the terminal via /dev/tty
+    # Capture sd output; UI and errors go to the terminal via /dev/tty
     local target
-    target=$(scd "$@" 2>/dev/tty)
+    target=$(sd "$@" 2>/dev/tty)
     local exit_code=$?
 
     if [ $exit_code -eq 0 ] && [ -n "$target" ]; then
         if builtin cd "$target"; then
-            scd --record "$target" &>/dev/null &
+            sd --record "$target" &>/dev/null &
         fi
     fi
     return $exit_code
 }
 
 # zsh completion for bookmark names
-_scd_complete() {
+_sd_complete() {
     local state
     _arguments '*:: :->args'
     case $state in
         args)
             if [[ "${words[2]}" == @* ]]; then
                 local -a bookmarks
-                bookmarks=($(scd --list-bookmarks 2>/dev/null))
+                bookmarks=($(sd --list-bookmarks 2>/dev/null))
                 compadd -P @ -- "${bookmarks[@]#@}"
             else
                 _directories
@@ -37,4 +37,4 @@ _scd_complete() {
             ;;
     esac
 }
-compdef _scd_complete cd
+compdef _sd_complete cd

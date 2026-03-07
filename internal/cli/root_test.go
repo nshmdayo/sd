@@ -40,7 +40,7 @@ func runScd(t *testing.T, args ...string) (stdout string, exitCode int) {
 
 	// Inject args.
 	origArgs := os.Args
-	os.Args = append([]string{"scd"}, args...)
+	os.Args = append([]string{"sd"}, args...)
 	t.Cleanup(func() { os.Args = origArgs })
 
 	err := cli.Execute()
@@ -125,11 +125,11 @@ func TestBookmarkAddListDelete(t *testing.T) {
 	origArgs := os.Args
 	t.Cleanup(func() { os.Args = origArgs })
 
-	os.Args = []string{"scd", "-a", "testbm"}
+	os.Args = []string{"sd", "-a", "testbm"}
 	_ = cli.Execute()
 
 	// -l: list should contain our bookmark
-	os.Args = []string{"scd", "--list-bookmarks"}
+	os.Args = []string{"sd", "--list-bookmarks"}
 	origStdout := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w
@@ -144,7 +144,7 @@ func TestBookmarkAddListDelete(t *testing.T) {
 	}
 
 	// @testbm: jump should return targetDir
-	os.Args = []string{"scd", "@testbm"}
+	os.Args = []string{"sd", "@testbm"}
 	r, w, _ = os.Pipe()
 	os.Stdout = w
 	err := cli.Execute()
@@ -165,11 +165,11 @@ func TestBookmarkAddListDelete(t *testing.T) {
 	}
 
 	// -d: delete
-	os.Args = []string{"scd", "-d", "testbm"}
+	os.Args = []string{"sd", "-d", "testbm"}
 	_ = cli.Execute()
 
 	// After delete, jump should fail
-	os.Args = []string{"scd", "@testbm"}
+	os.Args = []string{"sd", "@testbm"}
 	r, w, _ = os.Pipe()
 	os.Stdout = w
 	err = cli.Execute()
@@ -207,7 +207,7 @@ func TestBookmarkJump_PathGone(t *testing.T) {
 
 	origArgs := os.Args
 	t.Cleanup(func() { os.Args = origArgs })
-	os.Args = []string{"scd", "@gone"}
+	os.Args = []string{"sd", "@gone"}
 	err := cli.Execute()
 	if err == nil || cli.ExitCode(err) == 0 {
 		t.Error("expected non-zero exit when bookmark path no longer exists")
@@ -244,7 +244,7 @@ func TestStackPushPop(t *testing.T) {
 	origStdout := os.Stdout
 
 	// Push
-	os.Args = []string{"scd", "-p", dir}
+	os.Args = []string{"sd", "-p", dir}
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 	if err := cli.Execute(); err != nil {
@@ -259,7 +259,7 @@ func TestStackPushPop(t *testing.T) {
 	}
 
 	// Pop
-	os.Args = []string{"scd", "--"}
+	os.Args = []string{"sd", "--"}
 	r, w, _ = os.Pipe()
 	os.Stdout = w
 	if err := cli.Execute(); err != nil {
@@ -303,7 +303,7 @@ func TestFuzzySearch_Found(t *testing.T) {
 	os.Stderr, _ = os.Open(os.DevNull)
 	t.Cleanup(func() { os.Stderr = origStderr })
 
-	os.Args = []string{"scd", "myproject"}
+	os.Args = []string{"sd", "myproject"}
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 	err := cli.Execute()

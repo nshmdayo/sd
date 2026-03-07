@@ -1,4 +1,4 @@
-# scd — smart cd
+# sd — smart cd
 
 A smarter `cd` command for bash and zsh. Jump to directories by fuzzy name, bookmark, or history — without typing full paths.
 
@@ -16,7 +16,7 @@ A smarter `cd` command for bash and zsh. Jump to directories by fuzzy name, book
 ### Build from source
 
 ```bash
-go install github.com/nshmdayo/zcd/cmd/scd@latest
+go install github.com/nshmdayo/zcd/cmd/sd@latest
 ```
 
 Or clone and build:
@@ -24,23 +24,23 @@ Or clone and build:
 ```bash
 git clone https://github.com/nshmdayo/zcd
 cd zcd
-make build          # produces bin/scd
+make build          # produces bin/sd
 ```
 
-Move `bin/scd` somewhere on your `$PATH`, then add the shell integration to your RC file.
+Move `bin/sd` somewhere on your `$PATH`, then add the shell integration to your RC file.
 
 ### Shell integration
 
 **zsh** — add to `~/.zshrc`:
 
 ```zsh
-eval "$(scd --init zsh)"
+eval "$(sd --init zsh)"
 ```
 
 **bash** — add to `~/.bashrc`:
 
 ```bash
-eval "$(scd --init bash)"
+eval "$(sd --init bash)"
 ```
 
 Restart your shell or `source ~/.zshrc` / `source ~/.bashrc`.
@@ -141,13 +141,13 @@ XDG base directories (`XDG_CONFIG_HOME`, `XDG_DATA_HOME`) are respected.
 ## How it works
 
 `cd` is a shell builtin, so an external process cannot change the working directory directly.
-`scd` handles all the logic and prints the resolved path to stdout. A thin shell wrapper captures it and calls `builtin cd`:
+`sd` handles all the logic and prints the resolved path to stdout. A thin shell wrapper captures it and calls `builtin cd`:
 
 ```
 shell wrapper (cd function)
-  └─ target=$(scd "$@" 2>/dev/tty)   ← captures path from stdout
+  └─ target=$(sd "$@" 2>/dev/tty)   ← captures path from stdout
      builtin cd "$target"
-     scd --record "$target" &        ← record history asynchronously
+     sd --record "$target" &        ← record history asynchronously
 ```
 
 UI output (fzf, error messages) goes to stderr so it reaches the terminal without polluting the captured path.
@@ -157,7 +157,7 @@ UI output (fzf, error messages) goes to stderr so it reaches the terminal withou
 ```bash
 make test    # run all tests with race detector
 make bench   # run benchmarks
-make build   # build bin/scd
+make build   # build bin/sd
 ```
 
 ## Requirements
