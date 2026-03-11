@@ -5,13 +5,14 @@ CONTAINER_IMAGE   ?= sd-dev
 GOMODCACHE_VOL    ?= sd-gomodcache
 USE_CONTAINER     ?= 1
 
-ifeq ($(USE_CONTAINER),1)
-RUNNER = $(CONTAINER_RUNTIME) run --rm \
+PODMAN_RUN_OPTS = --rm \
 	--userns=keep-id \
 	-v "$(CURDIR):/app:Z" \
 	-v "$(GOMODCACHE_VOL):/go/pkg/mod:Z" \
-	-w /app \
-	$(CONTAINER_IMAGE)
+	-w /app
+
+ifeq ($(USE_CONTAINER),1)
+RUNNER = $(CONTAINER_RUNTIME) run $(PODMAN_RUN_OPTS) $(CONTAINER_IMAGE)
 else
 RUNNER =
 endif
@@ -38,9 +39,4 @@ container-build: ## Build the development container image
 	$(CONTAINER_RUNTIME) build -f Containerfile -t $(CONTAINER_IMAGE) .
 
 dev-shell: ## Start an interactive shell in the development container
-	$(CONTAINER_RUNTIME) run --rm -it \
-		--userns=keep-id \
-		-v "$(CURDIR):/app:Z" \
-		-v "$(GOMODCACHE_VOL):/go/pkg/mod:Z" \
-		-w /app \
-		$(CONTAINER_IMAGE) bash
+	$(CONTAINER_RUNTIME) run -it $(PODMAN_RUN_OPTS) $(CONTAINER_IMAGE) bash
